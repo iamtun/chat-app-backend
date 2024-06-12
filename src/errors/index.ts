@@ -30,9 +30,18 @@ class TokenInvalidError extends Error {
 	}
 }
 
+class NoFileUploadedError extends Error {
+	constructor(message: string) {
+		super(message);
+
+		this.name = 'no_file_uploaded';
+	}
+}
+
 export {
 	UserNotFoundError,
 	NoTokenProvidedError,
 	TokenExpiredError,
 	TokenInvalidError,
+	NoFileUploadedError,
 };

@@ -1,27 +1,20 @@
 ﻿import { StatusCodes } from 'http-status-codes';
 import Express from 'express';
 
-import multer from 'multer';
-import S3Storage from '../configs/storage';
-import { convertLocationFileUploaded } from '../utils/upload';
-
-const upload = multer({ storage: S3Storage, limits: { fileSize: 1024 * 50 } });
+import { upload } from '../configs/upload';
+import { UploadMultipleFileMiddleware, UploadSingleFileMiddleware } from '../middlewares/upload.middleware';
 
 const router = Express.Router();
 
-router.post('/', upload.array('files'), (req, res) => {
-	const files = req.files as globalThis.Express.Multer.File[];
-	if (!files || files.length === 0) {
-		return res
-			.status(StatusCodes.BAD_REQUEST)
-			.json({ error: 'No files uploaded' });
-	}
-	return res.status(StatusCodes.OK).json({
-		files: files.map((file: any) => ({
-			...file,
-			location: convertLocationFileUploaded(file.location),
-		})),
-	});
-});
+router.post(
+	'/',
+	upload.array('files'),
+	UploadMultipleFileMiddleware,
+	(req, res) => {
+		return res.status(StatusCodes.OK).json({
+			files: req.file,
+		});
+	},
+);
 
 export default router;

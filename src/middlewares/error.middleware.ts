@@ -5,8 +5,10 @@ import {
 	NoTokenProvidedError,
 	TokenExpiredError,
 	TokenInvalidError,
+	NoFileUploadedError,
 } from '../errors';
 import { NextFunction, Request, Response } from 'express';
+import { MulterError } from 'multer';
 
 const config = {
 	environment: process.env.NODE_ENV || 'development',
@@ -42,6 +44,16 @@ const UnhandledErrorMiddleware = (
 		statusCode = StatusCodes.BAD_REQUEST;
 		error = 'Token invalid';
 		message = err.message || 'Token invalid';
+	} else if (err instanceof MulterError) {
+		error_code = 'multer_error';
+		statusCode = StatusCodes.BAD_REQUEST;
+		error = 'File upload error';
+		message = err.message || 'File upload error';
+	} else if (err instanceof NoFileUploadedError) {
+		error_code = err.name || 'no_file_uploaded';
+		statusCode = StatusCodes.BAD_REQUEST;
+		error = 'File upload error';
+		message = err.message || 'File upload error';
 	}
 
 	const errorResponse = {
