@@ -9,7 +9,8 @@ const UploadMultipleFileMiddleware = (
 ) => {
 	const files = req.files as globalThis.Express.Multer.File[];
 	if (!req.files) {
-		next(new NoFileUploadedError('No files uploaded'));
+		// next(new NoFileUploadedError('No files uploaded'));
+		return next();
 	}
 
 	const fileUrls = files.map((file: any) =>
@@ -28,7 +29,8 @@ const UploadSingleFileMiddleware = (
 ) => {
 	const file = req.file as any;
 	if (!file) {
-		next(new NoFileUploadedError('No file uploaded'));
+		// next(new NoFileUploadedError('No file uploaded'));
+		return next();
 	}
 
 	const fileUrl = convertLocationFileUploaded(file.location);
