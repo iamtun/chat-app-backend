@@ -5,7 +5,8 @@ import { upload } from '../configs/upload';
 import { UploadSingleFileMiddleware } from '../middlewares/upload.middleware';
 
 const router = Router();
-router.get('/', AuthMiddleware, userController.getUser);
+router.get('/', AuthMiddleware, userController.getUserInfo);
+router.get('/search', AuthMiddleware, userController.findUserListByName);
 router.patch(
 	'/',
 	AuthMiddleware,

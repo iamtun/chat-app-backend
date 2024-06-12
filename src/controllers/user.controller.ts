@@ -1,11 +1,26 @@
 ﻿import { Response, Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import userService from '../services/user.service';
+import { mappingResponse } from '../utils';
 
 class UserController {
 	constructor() {}
 
-	async getUser(req: Request, res: Response) {
-		return res.status(200).json({ user: req.user });
+	async getUserInfo(req: Request, res: Response) {
+		return mappingResponse(res, StatusCodes.OK, req.user);
+	}
+
+	async findUserListByName(req: Request, res: Response) {
+		const { full_name, page = 1, page_size = 10 } = req.query;
+		if (!full_name) {
+			return mappingResponse(res, StatusCodes.OK, []);
+		}
+		const users = await userService.findUserByFullName(
+			full_name + '',
+			Number(page),
+			Number(page_size),
+		);
+		return mappingResponse(res, StatusCodes.OK, users);
 	}
 
 	async updateUser(req: Request, res: Response) {
