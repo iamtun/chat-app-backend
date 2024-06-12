@@ -1,0 +1,3 @@
+﻿const MAX_SIZE_FILE_UPLOAD = 1024 * 1024 * 5; //5MB
+
+export { MAX_SIZE_FILE_UPLOAD };
