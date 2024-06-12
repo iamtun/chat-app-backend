@@ -17,7 +17,8 @@ const AuthMiddleware = async (
 
 	try {
 		const decodedToken = await admin.auth().verifyIdToken(token);
-		const { user_id, name, picture } = decodedToken;
+		const { user_id, name, picture, firebase } = decodedToken;
+		const { sign_in_provider } = firebase;
 		const user = await userModel.findOne({ firebase_id: user_id });
 
 		if (user) {
@@ -28,6 +29,7 @@ const AuthMiddleware = async (
 				firebase_id: user_id,
 				full_name: name,
 				avatar: picture,
+				login_provider: sign_in_provider,
 			});
 
 			await userCreated.save();

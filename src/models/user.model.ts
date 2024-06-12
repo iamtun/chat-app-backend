@@ -26,6 +26,20 @@ const userSchema = new Schema(
 			ref: 'users',
 			default: [],
 		},
+		login_provider: {
+			type: String,
+			required: true,
+			default: 'anonymous',
+		},
+		locked_at: {
+			type: Date,
+			default: null,
+		},
+		role: {
+			type: String,
+			enum: ['user', 'admin'],
+			default: 'user',
+		},
 	},
 	{
 		timestamps: {
