@@ -1,7 +1,11 @@
 ﻿import { NextFunction, Request, Response } from 'express';
 import admin from '../configs/firebase-admin';
 import userModel from '../models/user.model';
-import { TokenExpiredError, TokenInvalidError } from '../errors';
+import {
+	NoTokenProvidedError,
+	TokenExpiredError,
+	TokenInvalidError,
+} from '../errors';
 
 const AuthMiddleware = async (
 	req: Request,
@@ -10,7 +14,7 @@ const AuthMiddleware = async (
 ) => {
 	const authorizationToken = req.headers.authorization;
 	if (!authorizationToken) {
-		return res.status(401).json({ error: 'Unauthorized' });
+		return next(new NoTokenProvidedError('No token provided'));
 	}
 
 	const [_, token] = authorizationToken.split('Bearer ');
