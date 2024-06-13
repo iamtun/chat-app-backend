@@ -1,13 +1,11 @@
 ﻿import { NextFunction, Request, Response } from 'express';
 import admin from '../configs/firebase-admin';
-import userModel from '../models/user.model';
 import {
 	NoTokenProvidedError,
 	TokenExpiredError,
 	TokenInvalidError,
 } from '../errors';
-import redis from '../cache';
-import { TIME_EXPIRED_CACHE } from '../utils/constant';
+import userService from '../services/user.service';
 
 const AuthMiddleware = async (
 	req: Request,
@@ -23,34 +21,34 @@ const AuthMiddleware = async (
 
 	try {
 		const decodedToken = await admin.auth().verifyIdToken(token);
-		const { user_id, name, picture, firebase } = decodedToken;
+		const {
+			user_id: firebaseUserId,
+			name,
+			picture = '',
+			firebase,
+		} = decodedToken;
 		const { sign_in_provider } = firebase;
-		const userCached = await redis.get(user_id);
+		const userCached = await userService.findUserInCacheById(firebaseUserId);
 
 		if (userCached) {
 			req.user = JSON.parse(userCached);
 			next();
 		} else {
-			const userDB = await userModel.findOne({ firebase_id: user_id });
+			const userDB = await userService.findUserByFirebaseId(firebaseUserId);
 			if (userDB) {
 				req.user = userDB;
-				await redis.setex(user_id, TIME_EXPIRED_CACHE, JSON.stringify(userDB));
+				await userService.saveUserInCache(firebaseUserId, userDB);
+
 				next();
 				return;
 			} else {
-				const userCreated = new userModel({
-					firebase_id: user_id,
-					full_name: name,
+				const userCreated = userService.createUser({
 					avatar: picture,
+					firebase_id: firebaseUserId,
+					full_name: name,
 					login_provider: sign_in_provider,
 				});
 
-				await userCreated.save();
-				await redis.setex(
-					user_id,
-					TIME_EXPIRED_CACHE,
-					JSON.stringify(userCreated),
-				);
 				req.user = userCreated;
 				next();
 			}
