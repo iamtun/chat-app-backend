@@ -1,5 +1,6 @@
 ﻿import redis from '../cache';
 import userModel from '../models/user.model';
+import { IUserCreated, IUserSaveInCache } from '../types/user';
 import { TIME_EXPIRED_CACHE } from '../utils/constant';
 
 class UserService {
@@ -48,6 +49,32 @@ class UserService {
 
 			return user;
 		}
+	}
+
+	async findUserByFirebaseId(firebaseId: string) {
+		return await userModel.findOne({ firebase_id: firebaseId });
+	}
+
+	async createUser(user: IUserCreated) {
+		const userCreated = new userModel({
+			...user,
+		});
+
+		await userCreated.save();
+		await this.saveUserInCache(user.firebase_id, userCreated);
+		return userCreated;
+	}
+
+	async saveUserInCache(firebaseUserId: string, user: any) {
+		return await redis.setex(
+			firebaseUserId,
+			TIME_EXPIRED_CACHE,
+			JSON.stringify(user),
+		);
+	}
+
+	async findUserInCacheById(id: string) {
+		return await redis.get(id);
 	}
 }
 
