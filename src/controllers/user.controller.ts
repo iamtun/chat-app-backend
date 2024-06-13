@@ -27,19 +27,14 @@ class UserController {
 		const { user, fileUrl, body } = req;
 		const { full_name = '', dob = '' } = body;
 
-		if (full_name) {
-			user.full_name = full_name;
-		}
-		if (fileUrl) {
-			user.avatar = fileUrl;
-		}
-		if (dob) {
-			user.dob = new Date(dob);
-		}
+		const userUpdated = await userService.updateUser(
+			user._id,
+			full_name,
+			dob,
+			fileUrl,
+		);
 
-		await user.save();
-
-		return res.status(StatusCodes.CREATED).json({ user });
+		return mappingResponse(res, StatusCodes.OK, userUpdated);
 	}
 }
 
