@@ -6,6 +6,8 @@ import {
 	TokenExpiredError,
 	TokenInvalidError,
 	NoFileUploadedError,
+	FriendExistedError,
+	FriendReqNotFountError,
 } from '../errors';
 import { NextFunction, Request, Response } from 'express';
 import { MulterError } from 'multer';
@@ -54,6 +56,16 @@ const UnhandledErrorMiddleware = (
 		statusCode = StatusCodes.BAD_REQUEST;
 		error = 'File upload error';
 		message = err.message || 'File upload error';
+	} else if (err instanceof FriendExistedError) {
+		error_code = err.name || 'friend_existed';
+		statusCode = StatusCodes.BAD_REQUEST;
+		error = 'Friend existed';
+		message = err.message || 'Friend existed';
+	} else if (err instanceof FriendReqNotFountError) {
+		error_code = err.name || 'friend_req_not_found';
+		statusCode = StatusCodes.NOT_FOUND;
+		error = 'Friend request not found';
+		message = err.message || 'Friend request not found';
 	}
 
 	const errorResponse = {

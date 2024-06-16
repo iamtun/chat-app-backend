@@ -38,10 +38,28 @@ class NoFileUploadedError extends Error {
 	}
 }
 
+class FriendExistedError extends Error {
+	constructor(message: string) {
+		super(message);
+
+		this.name = 'friend_existed';
+	}
+}
+
+class FriendReqNotFountError extends Error {
+	constructor(message: string) {
+		super(message);
+
+		this.name = 'friend_req_not_found';
+	}
+}
+
 export {
 	UserNotFoundError,
 	NoTokenProvidedError,
 	TokenExpiredError,
 	TokenInvalidError,
 	NoFileUploadedError,
+	FriendExistedError,
+	FriendReqNotFountError,
 };
