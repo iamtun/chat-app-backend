@@ -42,7 +42,7 @@ const AuthMiddleware = async (
 				next();
 				return;
 			} else {
-				const userCreated = userService.createUser({
+				const userCreated = await userService.createUser({
 					avatar: picture,
 					firebase_id: firebaseUserId,
 					full_name: name,
