@@ -15,6 +15,7 @@ class UserService {
 			.find({
 				full_name: { $regex: fullName, $options: 'i' },
 			})
+			.select({ full_name: 1, avatar: 1 })
 			.skip((page - 1) * pageSize)
 			.limit(pageSize);
 		return users;
