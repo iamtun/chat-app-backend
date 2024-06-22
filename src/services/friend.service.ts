@@ -1,5 +1,7 @@
 ﻿import { FriendReqNotFountError, UserNotFoundError } from '../errors';
+import conversationModel from '../models/conversation.model';
 import friendModel from '../models/friend.model';
+import messageModel from '../models/message.model';
 import userModel from '../models/user.model';
 import userService from './user.service';
 
@@ -57,12 +59,33 @@ class FriendService {
 			if (sender && receiver) {
 				sender.friend_ids.push(receiverId);
 				receiver.friend_ids.push(senderId);
+
 				await sender.save();
 				await receiver.save();
 				await this.rejectFriend(friend_id);
 				await userService.saveUserInCache(sender.firebase_id, sender);
 				await userService.saveUserInCache(receiver.firebase_id, receiver);
+
+				const conversation = new conversationModel({
+					members: [senderId, receiverId],
+				});
+
+				await conversation.save();
+
+				const firstMessage = new messageModel({
+					sender: null,
+					conversation_id: conversation._id,
+					content: 'Hai bạn đã được kết nối với nhau',
+				});
+
+				firstMessage.save();
+				conversation.last_message = firstMessage._id;
+				conversation.save();
+
+				return;
 			}
+
+			return;
 		} catch (error) {
 			throw error;
 		}
