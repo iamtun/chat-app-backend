@@ -1,5 +1,4 @@
-﻿import mongoose from 'mongoose';
-import { FriendReqNotFountError, UserNotFoundError } from '../errors';
+﻿import { FriendReqNotFountError, UserNotFoundError } from '../errors';
 import friendModel from '../models/friend.model';
 import userModel from '../models/user.model';
 import userService from './user.service';
@@ -40,7 +39,7 @@ class FriendService {
 
 	async acceptFriend(friend_id: string) {
 		try {
-			const friendReq = await friendService.findFriendReqById(friend_id);
+			const friendReq = await this.findFriendReqById(friend_id);
 
 			const senderId = friendReq.sender + '';
 			const receiverId = friendReq.receiver + '';
@@ -70,7 +69,7 @@ class FriendService {
 	}
 
 	async rejectFriend(friend_id: string) {
-		await friendService.findFriendReqById(friend_id);
+		await this.findFriendReqById(friend_id);
 		await friendModel.deleteOne({ _id: friend_id });
 	}
 }
