@@ -54,6 +54,28 @@ class FriendReqNotFountError extends Error {
 	}
 }
 
+class MessageNoContent extends Error {
+	constructor(message: string) {
+		super(message);
+
+		this.name = 'message_no_content';
+	}
+}
+
+class ConversationIdInValid extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'invalid_conversation_id';
+	}
+}
+
+class NotFound extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'not_found';
+	}
+}
+
 export {
 	UserNotFoundError,
 	NoTokenProvidedError,
@@ -62,4 +84,7 @@ export {
 	NoFileUploadedError,
 	FriendExistedError,
 	FriendReqNotFountError,
+	MessageNoContent,
+	ConversationIdInValid,
+	NotFound,
 };

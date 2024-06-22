@@ -8,6 +8,9 @@ import {
 	NoFileUploadedError,
 	FriendExistedError,
 	FriendReqNotFountError,
+	MessageNoContent,
+	ConversationIdInValid,
+	NotFound,
 } from '../errors';
 import { NextFunction, Request, Response } from 'express';
 import { MulterError } from 'multer';
@@ -66,6 +69,26 @@ const UnhandledErrorMiddleware = (
 		statusCode = StatusCodes.NOT_FOUND;
 		error = 'Friend request not found';
 		message = err.message || 'Friend request not found';
+	} else if (err instanceof MessageNoContent) {
+		error_code = err.name || 'message_no_content';
+		statusCode = StatusCodes.BAD_REQUEST;
+		error = 'Message no content';
+		message = err.message || 'Message no content';
+	} else if (err instanceof MessageNoContent) {
+		error_code = err.name || 'message_no_content';
+		statusCode = StatusCodes.BAD_REQUEST;
+		error = 'Message no content';
+		message = err.message || 'Message no content';
+	} else if (err instanceof ConversationIdInValid) {
+		error_code = err.name || 'invalid_conversation_id';
+		statusCode = StatusCodes.BAD_REQUEST;
+		error = 'Invalid conversation id';
+		message = err.message || 'Invalid conversation id';
+	} else if (err instanceof NotFound) {
+		error_code = err.name || 'not_found';
+		statusCode = StatusCodes.NOT_FOUND;
+		error = 'Record not found';
+		message = err.message || 'Record not found';
 	}
 
 	const errorResponse = {
