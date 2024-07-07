@@ -1,16 +1,18 @@
-﻿import { Request, Response } from 'express';
+﻿import { NextFunction, Request, Response } from 'express';
 import conversationService from '../services/conversation.service';
-import { mappingResponse } from '../utils';
+import { createResponse, mappingResponse } from '../utils';
+import { StatusCodes } from 'http-status-codes';
 
 class ConversationController {
 	constructor() {}
 
-	async getConversationList(req: Request, res: Response) {
+	async getConversationList(req: Request, res: Response, next: NextFunction) {
 		const { user } = req;
 		const conversations = await conversationService.getConversationList(
 			user._id,
 		);
-		return mappingResponse(res, 200, conversations);
+
+		return createResponse(res, StatusCodes.CREATED, conversations, next);
 	}
 }
 

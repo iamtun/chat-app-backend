@@ -1,16 +1,17 @@
-﻿import { Response, Request } from 'express';
+﻿import { Response, Request, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import userService from '../services/user.service';
-import { mappingResponse } from '../utils';
+import { createResponse, mappingResponse } from '../utils';
 
 class UserController {
 	constructor() {}
 
-	async getUserInfo(req: Request, res: Response) {
-		return mappingResponse(res, StatusCodes.OK, req.user);
+	async getUserInfo(req: Request, res: Response, next: NextFunction) {
+		const data = req.user;
+		return createResponse(res, StatusCodes.OK, data, next);
 	}
 
-	async findUserListByName(req: Request, res: Response) {
+	async findUserListByName(req: Request, res: Response, next: NextFunction) {
 		const { full_name, page = 1, page_size = 10 } = req.query;
 		if (!full_name) {
 			return mappingResponse(res, StatusCodes.OK, []);
@@ -20,10 +21,11 @@ class UserController {
 			Number(page),
 			Number(page_size),
 		);
-		return mappingResponse(res, StatusCodes.OK, users);
+		
+		return createResponse(res, StatusCodes.OK, users, next);
 	}
 
-	async updateUser(req: Request, res: Response) {
+	async updateUser(req: Request, res: Response, next: NextFunction) {
 		const { user, fileUrl, body } = req;
 		const { full_name = '', dob = '' } = body;
 
@@ -34,7 +36,7 @@ class UserController {
 			fileUrl,
 		);
 
-		return mappingResponse(res, StatusCodes.OK, userUpdated);
+		return createResponse(res, StatusCodes.CREATED, userUpdated, next);
 	}
 }
 
