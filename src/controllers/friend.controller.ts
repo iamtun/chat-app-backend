@@ -1,7 +1,8 @@
 ﻿import { NextFunction, Request, Response } from 'express';
 import friendService from '../services/friend.service';
-import { mappingResponse } from '../utils';
+import { createResponse } from '../utils';
 import { FriendExistedError } from '../errors';
+import { StatusCodes } from 'http-status-codes';
 
 class FriendController {
 	constructor() {}
@@ -22,13 +23,13 @@ class FriendController {
 			content,
 		);
 
-		return mappingResponse(res, 201, friend);
+		return createResponse(res, StatusCodes.CREATED, friend, next);
 	}
 
-	async getFriendList(req: Request, res: Response) {
+	async getFriendList(req: Request, res: Response, next: NextFunction) {
 		const { user } = req;
 		const friends = await friendService.getFriendList(user._id);
-		return mappingResponse(res, 200, friends);
+		return createResponse(res, StatusCodes.OK, friends, next);
 	}
 
 	async handleRequestFriend(req: Request, res: Response, next: NextFunction) {
@@ -41,7 +42,7 @@ class FriendController {
 			} else {
 				await friendService.rejectFriend(id);
 			}
-			return mappingResponse(res, 201, {});
+			return createResponse(res, StatusCodes.CREATED, {}, next);
 		} catch (error) {
 			next(error);
 		}

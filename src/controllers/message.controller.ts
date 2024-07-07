@@ -1,7 +1,8 @@
 ﻿import { NextFunction, Request, Response } from 'express';
 import messageService from '../services/message.service';
-import { mappingResponse } from '../utils';
+import { createResponse } from '../utils';
 import { MessageNoContent } from '../errors';
+import { StatusCodes } from 'http-status-codes';
 
 class MessageController {
 	constructor() {}
@@ -20,10 +21,14 @@ class MessageController {
 			conversation_id,
 			fileUrls,
 		);
-		return mappingResponse(res, 201, message);
+		return createResponse(res, StatusCodes.CREATED, message, next);
 	}
 
-	async getMessageListByConversationId(req: Request, res: Response) {
+	async getMessageListByConversationId(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) {
 		const { conversationId } = req.params;
 		const { page = 1, pageSize = 10 } = req.query;
 		const messages = await messageService.getMessageListByConversationId(
@@ -31,10 +36,15 @@ class MessageController {
 			+page,
 			+pageSize,
 		);
-		return mappingResponse(res, 200, messages);
+
+		return createResponse(res, StatusCodes.OK, messages, next);
 	}
 
-	async getFileListByConversationId(req: Request, res: Response) {
+	async getFileListByConversationId(
+		req: Request,
+		res: Response,
+		next: NextFunction,
+	) {
 		const { conversationId } = req.params;
 		const { page = 1, pageSize = 10 } = req.query;
 		const files = await messageService.getFileListByConversationId(
@@ -42,7 +52,7 @@ class MessageController {
 			+page,
 			+pageSize,
 		);
-		return mappingResponse(res, 200, files);
+		return createResponse(res, StatusCodes.OK, files, next);
 	}
 }
 

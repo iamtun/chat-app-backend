@@ -1,7 +1,17 @@
-﻿import { Response } from 'express';
+﻿import { NextFunction, Response } from 'express';
 
 const mappingResponse = (res: Response, statusCode: number, data: any) => {
 	return res.status(statusCode).json({ data });
+};
+
+const createResponse = (
+	res: Response,
+	statusCode: number,
+	data: any,
+	next: NextFunction,
+) => {
+	res.locals = { data, statusCode };
+	return next();
 };
 
 const getFileType = (fileName: string) => {
@@ -26,4 +36,4 @@ const getFileType = (fileName: string) => {
 	}
 };
 
-export { mappingResponse, getFileType };
+export { mappingResponse, getFileType, createResponse };
