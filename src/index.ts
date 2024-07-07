@@ -8,6 +8,7 @@ import Database from './configs/db';
 import {
 	UnhandledErrorMiddleware,
 	RouteNotFoundErrorMiddleware,
+	WrapperDataMiddleware,
 } from './middlewares';
 
 configDotenv();
@@ -22,7 +23,7 @@ app.use(morgan('dev'));
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 
-app.use('/api/v1', appRouter);
+app.use('/api/v1', appRouter, WrapperDataMiddleware);
 
 app.use(RouteNotFoundErrorMiddleware);
 app.use(UnhandledErrorMiddleware);
